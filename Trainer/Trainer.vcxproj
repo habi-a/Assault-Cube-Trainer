@@ -127,11 +127,17 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="Trainer.cpp" />
+    <ClCompile Include="Main.cpp" />
+    <ClCompile Include="Module.cpp" />
+    <ClCompile Include="Player.cpp" />
+    <ClCompile Include="Process.cpp" />
     <ClCompile Include="Bypass.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Bypass.h" />
+    <ClInclude Include="Module.h" />
+    <ClInclude Include="Player.h" />
+    <ClInclude Include="Process.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

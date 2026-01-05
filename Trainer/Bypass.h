@@ -5,7 +5,7 @@
 class Bypass
 {
 public:
-	Bypass();
+	Bypass() = default;
 	~Bypass();
 	bool Attach(DWORD desiredAccess, DWORD pid);
 	bool Read(uintptr_t lpBaseAddress, void *lpBuffer, SIZE_T nSize, SIZE_T* lpNumberOfBytesRead = nullptr);
