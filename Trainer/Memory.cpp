@@ -24,7 +24,6 @@ bool Memory::ResolveProcess(const std::wstring &processName)
 {
     PROCESSENTRY32W pe{};
     pe.dwSize = sizeof(pe);
-
     HANDLE snapshot = CreateToolhelp32Snapshot(TH32CS_SNAPPROCESS,0);
 
     if (snapshot == INVALID_HANDLE_VALUE)
@@ -54,7 +53,6 @@ bool Memory::ResolveModule(const std::wstring &moduleName)
 {
     MODULEENTRY32W me{};
     me.dwSize = sizeof(me);
-
     HANDLE snapshot = CreateToolhelp32Snapshot(TH32CS_SNAPMODULE | TH32CS_SNAPMODULE32, m_pid);
 
     if (snapshot == INVALID_HANDLE_VALUE)

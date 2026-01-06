@@ -1,14 +1,16 @@
 #pragma once
 
 #include "Memory.h"
-#include <vector>
 
 class Player
 {
 public:
     int  GetAmmo(Memory &mem) const;
     void SetAmmo(Memory &mem, int value) const;
-
+    int  GetHealth(Memory &mem) const;
+    void SetHealth(Memory &mem, int value) const;
+    int  GetArmor(Memory &mem) const;
+    void SetArmor(Memory &mem, int value) const;
 private:
-    uintptr_t ResolvePointerChain(Memory &mem, uintptr_t baseOffset, const std::vector<uintptr_t> &offsets) const;
+    uintptr_t ResolveAddress(Memory& mem, uintptr_t fieldOffset) const;
 };
