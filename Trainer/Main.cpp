@@ -1,36 +1,37 @@
-#include <iostream>
+#include "Memory.h"
+#include "CheatManager.h"
+#include "Player.h"
+#include "UI.h"
+
 #include <Windows.h>
 
-#include "Bypass.h"
-#include "Module.h"
-#include "Player.h"
-#include "Process.h"
 
-int main()
+int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR, int)
 {
-	Bypass mem;
-	Process process;
-	Module game;
+    Memory       mem;
+    Player       player;
+    CheatManager cheats(player, mem);
+    HWND         hwnd;
+    MSG          msg{};
 
-	if (!process.Attach(L"ac_client.exe")) {
-		std::cout << "Process not found\n";
-		return EXIT_FAILURE;
-	}
-	if (!mem.Attach(PROCESS_VM_READ | PROCESS_VM_WRITE | PROCESS_VM_OPERATION, process.Pid())) {
-		std::cout << "Failed to attach memory\n";
-		return EXIT_FAILURE;
-	}
-	if (!game.Attach(process.Pid(), L"ac_client.exe")) {
-		std::cout << "Module not found\n";
-		return EXIT_FAILURE;
-	}
+    if (!mem.Attach(L"ac_client.exe", PROCESS_VM_READ | PROCESS_VM_WRITE | PROCESS_VM_OPERATION))
+    {
+        MessageBox(nullptr, L"Impossible d'attacher le process ac_client.exe", L"Erreur", MB_ICONERROR | MB_OK);
+        return EXIT_FAILURE;
+    }
 
-	Player player(game.getBase());
+    hwnd = CreateTrainerUI(hInstance, &cheats);
+    if (!hwnd)
+    {
+        MessageBox(nullptr, L"Impossible de créer l'interface", L"Erreur", MB_ICONERROR | MB_OK);
+        return EXIT_FAILURE;
+    }
 
-	while (!GetAsyncKeyState(VK_END)) {
-		player.SetAmmo(mem, 20);
-		Sleep(50);
-	}
+    while (GetMessage(&msg, nullptr, 0, 0))
+    {
+        TranslateMessage(&msg);
+        DispatchMessage(&msg);
+    }
 
-	return EXIT_SUCCESS;
+    return EXIT_SUCCESS;
 }

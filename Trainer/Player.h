@@ -1,16 +1,14 @@
 #pragma once
 
-#include "Bypass.h"
+#include "Memory.h"
+#include <vector>
 
 class Player
 {
 public:
-	explicit Player(uintptr_t moduleBase);
-
-	int  GetAmmo(Bypass &mem) const;
-	void SetAmmo(Bypass &mem, int value) const;
+    int  GetAmmo(Memory &mem) const;
+    void SetAmmo(Memory &mem, int value) const;
 
 private:
-	uintptr_t ResolveAmmoAddress(Bypass& mem) const;
-	uintptr_t m_moduleBase;
+    uintptr_t ResolvePointerChain(Memory &mem, uintptr_t baseOffset, const std::vector<uintptr_t> &offsets) const;
 };

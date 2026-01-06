@@ -79,7 +79,7 @@
       <LanguageStandard>stdcpp20</LanguageStandard>
     </ClCompile>
     <Link>
-      <SubSystem>Console</SubSystem>
+      <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
   </ItemDefinitionGroup>
@@ -107,7 +107,7 @@
       <LanguageStandard>stdcpp20</LanguageStandard>
     </ClCompile>
     <Link>
-      <SubSystem>Console</SubSystem>
+      <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
   </ItemDefinitionGroup>
@@ -127,17 +127,17 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="CheatManager.cpp" />
     <ClCompile Include="Main.cpp" />
-    <ClCompile Include="Module.cpp" />
     <ClCompile Include="Player.cpp" />
-    <ClCompile Include="Process.cpp" />
-    <ClCompile Include="Bypass.cpp" />
+    <ClCompile Include="Memory.cpp" />
+    <ClCompile Include="UI.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Bypass.h" />
-    <ClInclude Include="Module.h" />
+    <ClInclude Include="Memory.h" />
+    <ClInclude Include="CheatManager.h" />
     <ClInclude Include="Player.h" />
-    <ClInclude Include="Process.h" />
+    <ClInclude Include="UI.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
