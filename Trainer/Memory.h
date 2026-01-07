@@ -3,6 +3,7 @@
 #include <Windows.h>
 #include <string>
 
+
 class Memory
 {
 public:
@@ -10,8 +11,10 @@ public:
     ~Memory();
 
     bool Attach(const std::wstring &processName, DWORD desiredAccess);
-    bool Read(uintptr_t address, void *buffer, SIZE_T size, SIZE_T *bytesRead = nullptr);
-    bool Write(uintptr_t address, void *buffer, SIZE_T size, SIZE_T *bytesWritten = nullptr);
+    bool Read(uintptr_t address, void *buffer, SIZE_T size, SIZE_T *bytesRead = nullptr) const;
+    bool Write(uintptr_t address, void *buffer, SIZE_T size, SIZE_T *bytesWritten = nullptr) const;
+
+    uintptr_t ResolveAddress(uintptr_t address, uintptr_t offset) const;
 
     uintptr_t GetBase() const;
     DWORD     GetPid() const;

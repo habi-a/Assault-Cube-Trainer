@@ -1,8 +1,8 @@
 #include "CheatManager.h"
 
 
-CheatManager::CheatManager(Player& player, Memory& mem)
-    : m_player(player), m_mem(mem)
+CheatManager::CheatManager(Entity &entity, Player& player, Memory& mem)
+    : m_entity(entity), m_player(player), m_mem(mem)
 {
     m_cheat_thread = std::thread(&CheatManager::CheatLoop, this);
 }
@@ -30,6 +30,11 @@ void CheatManager::EnableInfiniteArmor(bool enable)
     m_infiniteArmor = enable;
 }
 
+void CheatManager::EnableESP(bool enable)
+{
+    m_esp_is_enabled = enable;
+}
+
 void CheatManager::CheatLoop()
 {
     while (m_running)
@@ -40,6 +45,8 @@ void CheatManager::CheatLoop()
             m_player.SetHealth(m_mem, m_healthFreezeValue);
         if (m_infiniteArmor)
             m_player.SetArmor(m_mem, m_armorFreezeValue);
+        if (m_esp_is_enabled)
+            m_entity.PrintHealth(m_mem);
         Sleep(50);
     }
 }

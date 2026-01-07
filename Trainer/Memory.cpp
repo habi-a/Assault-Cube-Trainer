@@ -78,12 +78,21 @@ bool Memory::ResolveModule(const std::wstring &moduleName)
     return false;
 }
 
-bool Memory::Read(uintptr_t address, void *buffer, SIZE_T size, SIZE_T *bytesRead)
+uintptr_t Memory::ResolveAddress(uintptr_t address, uintptr_t offset) const
+{
+    uintptr_t addr = m_base + address;
+
+    if (!Read(addr, &addr, sizeof(addr)))
+        return 0;
+    return addr + offset;
+}
+
+bool Memory::Read(uintptr_t address, void *buffer, SIZE_T size, SIZE_T *bytesRead) const
 {
     return ReadProcessMemory(m_hProcess, (LPCVOID)address, buffer, size, bytesRead) != FALSE;
 }
 
-bool Memory::Write(uintptr_t address, void *buffer, SIZE_T size, SIZE_T *bytesWritten)
+bool Memory::Write(uintptr_t address, void *buffer, SIZE_T size, SIZE_T *bytesWritten) const
 {
     return WriteProcessMemory(m_hProcess, (LPVOID)address, buffer, size, bytesWritten) != FALSE;
 }

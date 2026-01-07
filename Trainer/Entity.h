@@ -2,6 +2,9 @@
 
 #include "Memory.h"
 
+#include <Windows.h>
+
+
 struct Vec3
 {
     float x;
@@ -12,11 +15,10 @@ struct Vec3
 class Entity
 {
 public:
-    bool GetPosition(Memory &mem, uintptr_t entityBase, Vec3 &outPos) const;
-    bool GetHealth(Memory &mem, uintptr_t entityBase, int &outHealth) const;
+    void PrintHealth(Memory& mem) const;
+    //bool GetPosition(Memory &mem, Vec3 &outPos) const;
+    //bool GetHealth(Memory &mem, int &outHealth) const;
 private:
-    int  health;
-    int  ammo;
-    char name[16];
-    Vec3 coords;
+    SIZE_T GetPlayerCount(Memory& mem) const;
+    int GetHealthByEntity(Memory& mem, DWORD entity_address) const;
 };

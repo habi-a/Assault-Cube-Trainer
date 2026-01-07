@@ -32,6 +32,12 @@ LRESULT CALLBACK UIPrc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
                     SendMessage((HWND)lParam, BM_GETCHECK, 0, 0) == BST_CHECKED;
                 cheats->EnableInfiniteArmor(checked);
             }
+            else if (LOWORD(wParam) == ID_CHECKBOX_ESP)
+            {
+                bool checked =
+                    SendMessage((HWND)lParam, BM_GETCHECK, 0, 0) == BST_CHECKED;
+                cheats->EnableESP(checked);
+            }
             break;
 
         case WM_DESTROY:
@@ -64,6 +70,7 @@ HWND CreateTrainerUI(HINSTANCE hInstance, CheatManager* cheats)
     CreateWindow(L"BUTTON", L"Infinite Ammo", WS_VISIBLE | WS_CHILD | BS_AUTOCHECKBOX, 20, 30, 200, 25, hwnd, (HMENU)ID_CHECKBOX_AMMO, hInstance, nullptr);
     CreateWindow(L"BUTTON", L"Infinite Health", WS_VISIBLE | WS_CHILD | BS_AUTOCHECKBOX, 20, 65, 200, 25, hwnd, (HMENU)ID_CHECKBOX_HEALTH, hInstance, nullptr);
     CreateWindow(L"BUTTON", L"Infinite Armor", WS_VISIBLE | WS_CHILD | BS_AUTOCHECKBOX, 20, 100, 200, 25, hwnd, (HMENU)ID_CHECKBOX_ARMOR, hInstance, nullptr);
+    CreateWindow(L"BUTTON", L"Enable ESP", WS_VISIBLE | WS_CHILD | BS_AUTOCHECKBOX, 20, 135, 200, 25, hwnd, (HMENU)ID_CHECKBOX_ESP, hInstance, nullptr);
     ShowWindow(hwnd, SW_SHOW);
     UpdateWindow(hwnd);
     return hwnd;

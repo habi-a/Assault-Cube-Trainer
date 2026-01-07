@@ -138,6 +138,7 @@
     <ClInclude Include="Entity.h" />
     <ClInclude Include="Memory.h" />
     <ClInclude Include="CheatManager.h" />
+    <ClInclude Include="Offsets.h" />
     <ClInclude Include="Player.h" />
     <ClInclude Include="UI.h" />
   </ItemGroup>

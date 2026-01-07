@@ -11,6 +11,4 @@ public:
     void SetHealth(Memory &mem, int value) const;
     int  GetArmor(Memory &mem) const;
     void SetArmor(Memory &mem, int value) const;
-private:
-    uintptr_t ResolveAddress(Memory& mem, uintptr_t fieldOffset) const;
 };

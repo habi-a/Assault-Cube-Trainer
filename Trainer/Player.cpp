@@ -1,42 +1,21 @@
+#include "Offsets.h"
 #include "Player.h"
 
 
-namespace Offsets
-{
-    namespace LocalPlayer
-    {
-        constexpr uintptr_t Base   = 0x0017E0A8;
-        constexpr uintptr_t Ammo   = 0x140;
-        constexpr uintptr_t Health = 0xEC;
-        constexpr uintptr_t Armor  = 0xF0;
-        constexpr uintptr_t Name   = 0x205;
-    }
-}
-
-uintptr_t Player::ResolveAddress(Memory &mem, uintptr_t fieldOffset) const
-{
-    uintptr_t addr = mem.GetBase() + Offsets::LocalPlayer::Base;
-
-    if (!mem.Read(addr, &addr, sizeof(addr)))
-        return 0;
-    return addr + fieldOffset;
-}
-
 int Player::GetAmmo(Memory &mem) const
 {
-    int ammo = 0;
-    uintptr_t addr = ResolveAddress(mem, Offsets::LocalPlayer::Ammo);
+    int ammo = -1;
+    uintptr_t addr = mem.ResolveAddress(Offsets::PlayerBase, Offsets::Ammo);
 
     if (!addr)
-        return 0;
+        return ammo;
     mem.Read(addr, &ammo, sizeof(ammo));
     return ammo;
 }
 
-
 void Player::SetAmmo(Memory &mem, int value) const
 {
-    uintptr_t addr = ResolveAddress(mem, Offsets::LocalPlayer::Ammo);
+    uintptr_t addr = mem.ResolveAddress(Offsets::PlayerBase, Offsets::Ammo);
 
     if (!addr)
         return;
@@ -45,19 +24,18 @@ void Player::SetAmmo(Memory &mem, int value) const
 
 int Player::GetHealth(Memory &mem) const
 {
-    int health = 0;
-    uintptr_t addr = ResolveAddress(mem, Offsets::LocalPlayer::Health);
+    int health = -1;
+    uintptr_t addr = mem.ResolveAddress(Offsets::PlayerBase, Offsets::Health);
 
     if (!addr)
-        return 0;
+        return health;
     mem.Read(addr, &health, sizeof(health));
     return health;
 }
 
-
 void Player::SetHealth(Memory &mem, int value) const
 {
-    uintptr_t addr = ResolveAddress(mem, Offsets::LocalPlayer::Health);
+    uintptr_t addr = mem.ResolveAddress(Offsets::PlayerBase, Offsets::Health);
 
     if (!addr)
         return;
@@ -66,19 +44,18 @@ void Player::SetHealth(Memory &mem, int value) const
 
 int Player::GetArmor(Memory &mem) const
 {
-    int armor = 0;
-    uintptr_t addr = ResolveAddress(mem, Offsets::LocalPlayer::Armor);
+    int armor = -1;
+    uintptr_t addr = mem.ResolveAddress(Offsets::PlayerBase, Offsets::Armor);
 
     if (!addr)
-        return 0;
+        return armor;
     mem.Read(addr, &armor, sizeof(armor));
     return armor;
 }
 
-
 void Player::SetArmor(Memory &mem, int value) const
 {
-    uintptr_t addr = ResolveAddress(mem, Offsets::LocalPlayer::Armor);
+    uintptr_t addr = mem.ResolveAddress(Offsets::PlayerBase, Offsets::Armor);
 
     if (!addr)
         return;

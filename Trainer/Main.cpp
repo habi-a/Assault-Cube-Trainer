@@ -9,8 +9,9 @@
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR, int)
 {
     Memory       mem;
+    Entity       entity;
     Player       player;
-    CheatManager cheats(player, mem);
+    CheatManager cheats(entity, player, mem);
     HWND         hwnd;
     MSG          msg{};
 
