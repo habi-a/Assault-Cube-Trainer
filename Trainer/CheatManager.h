@@ -1,8 +1,10 @@
 #pragma once
 
+#include "Camera.h"
 #include "Entity.h"
-#include "Player.h"
 #include "Memory.h"
+#include "Player.h"
+#include "Overlay.h"
 
 #include <atomic>
 #include <thread>
@@ -11,7 +13,7 @@
 class CheatManager
 {
 public:
-    CheatManager(Entity &entity, Player &player, Memory &mem);
+    CheatManager(Entity &entity, Player &player, Memory &mem, Overlay &overlay, Camera &camera);
     ~CheatManager();
 
     void EnableInfiniteAmmo(bool enable);
@@ -20,22 +22,22 @@ public:
     void EnableESP(bool enable);
 private:
     void CheatLoop();
+    void DrawESP();
 
-    Entity &m_entity;
-    Player &m_player;
-    Memory &m_mem;
+    Entity  &m_entity;
+    Player  &m_player;
+    Memory  &m_mem;
+    Overlay &m_overlay;
+    Camera  &m_camera;
 
-    std::atomic<bool> m_running{ true };
     std::thread       m_cheat_thread;
-
+    std::atomic<bool> m_running{ true };
     std::atomic<bool> m_infiniteAmmo{ false };
-    const int         m_ammoFreezeValue = 20;
-
     std::atomic<bool> m_infiniteHealth{ false };
-    const int         m_healthFreezeValue = 100;
-
     std::atomic<bool> m_infiniteArmor{ false };
-    const int         m_armorFreezeValue = 100;
-
     std::atomic<bool> m_esp_is_enabled{ false };
+
+    const int m_ammoFreezeValue = 20;
+    const int m_healthFreezeValue = 100;
+    const int m_armorFreezeValue = 100;
 };

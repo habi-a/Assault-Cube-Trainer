@@ -10,25 +10,64 @@ SIZE_T Entity::GetPlayerCount(Memory &mem) const
     return player_numbers;
 }
 
-
-void Entity::PrintHealth(Memory &mem) const
+int Entity::GetArmor(Memory& mem, DWORD entity_address) const
 {
-    int health;
-    SIZE_T player_numbers = GetPlayerCount(mem);
+    int armor = -1;
+
+    mem.Read(entity_address + Offsets::Armor, &armor, sizeof(armor));
+    return armor;
+}
+
+int Entity::GetHealth(Memory& mem, DWORD entity_address) const
+{
+    int health = -1;
+
+    mem.Read(entity_address + Offsets::Health, &health, sizeof(health));
+    return health;
+}
+
+Vec3 Entity::GetPosition(Memory &mem, DWORD entity_address) const
+{
+    Vec3 pos{};
+
+    mem.Read(entity_address + Offsets::PosX, &pos.x, sizeof(float));
+    mem.Read(entity_address + Offsets::PosY, &pos.y, sizeof(float));
+    mem.Read(entity_address + Offsets::PosZ, &pos.z, sizeof(float));
+    return pos;
+}
+
+Vec3 Entity::GetHeadPosition(Memory &mem, DWORD entity_address) const
+{
+    Vec3 pos{};
+
+    mem.Read(entity_address + Offsets::HeadPosX, &pos.x, sizeof(float));
+    mem.Read(entity_address + Offsets::HeadPosY, &pos.y, sizeof(float));
+    mem.Read(entity_address + Offsets::HeadPosZ, &pos.z, sizeof(float));
+    return pos;
+}
+
+EntityInfo Entity::GetEntity(Memory& mem, DWORD entityListAddress, SIZE_T playerNumber) const
+{
+    EntityInfo entity{};
+    DWORD entity_address = 0;
+
+    mem.Read(entityListAddress + playerNumber * sizeof(entity_address), &entity_address, sizeof(entity_address));
+
+    entity.health = GetHealth(mem, entity_address);
+    entity.armor = GetArmor(mem, entity_address);
+    entity.coords = GetPosition(mem, entity_address);
+    entity.headCoords = GetHeadPosition(mem, entity_address);
+    return entity;
+}
+
+std::vector<EntityInfo> Entity::GetAllEntities(Memory& mem) const
+{
+    std::vector<EntityInfo> entities;
     DWORD entity_list_address = 0;
+    SIZE_T player_numbers = GetPlayerCount(mem);
 
     mem.Read(mem.GetBase() + Offsets::EntityList, &entity_list_address, sizeof(entity_list_address));
-    for (int i = 1; i < player_numbers; ++i)
-    {
-        DWORD entity_address = 0;
-        mem.Read(entity_list_address + i * 4, &entity_address, sizeof(entity_address));
-
-        if (!entity_address)
-            continue;
-        health = -1;
-        mem.Read(entity_address + Offsets::Health, &health, sizeof(health));
-        char buffer[128];
-        sprintf_s(buffer, "Player[%d] HP=%d\n", i, health);
-        OutputDebugStringA(buffer);
-    }
+    for (SIZE_T i = 1; i < player_numbers; ++i)
+        entities.push_back(GetEntity(mem, entity_list_address, i));
+    return entities;
 }

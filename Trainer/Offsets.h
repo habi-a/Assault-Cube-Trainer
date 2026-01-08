@@ -5,6 +5,7 @@
 
 namespace Offsets
 {
+    inline constexpr uintptr_t ViewMatrix = 0x17DFD0;
     inline constexpr uintptr_t EntityList = 0x18AC04;
     inline constexpr uintptr_t PlayerCount = 0x18AC0C;
     inline constexpr uintptr_t PlayerBase = 0x0017E0A8;
@@ -12,7 +13,10 @@ namespace Offsets
     inline constexpr uintptr_t Health = 0xEC;
     inline constexpr uintptr_t Armor = 0xF0;
     inline constexpr uintptr_t Name = 0x205;
-    inline constexpr uintptr_t PosX = 0x2C;
-    inline constexpr uintptr_t PosY = 0x30;
-    inline constexpr uintptr_t PosZ = 0x28;
+    inline constexpr uintptr_t PosX = 0x28;
+    inline constexpr uintptr_t PosY = 0x2C;
+    inline constexpr uintptr_t PosZ = 0x30;
+    inline constexpr uintptr_t HeadPosX = 0x4;
+    inline constexpr uintptr_t HeadPosY = 0x8;
+    inline constexpr uintptr_t HeadPosZ = 0xC;
 }

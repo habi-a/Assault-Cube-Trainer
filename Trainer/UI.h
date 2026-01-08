@@ -7,4 +7,5 @@
 #define ID_CHECKBOX_ARMOR 103
 #define ID_CHECKBOX_ESP 104
 
+
 HWND CreateTrainerUI(HINSTANCE hInstance, CheatManager *cheats);
