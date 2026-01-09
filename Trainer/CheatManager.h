@@ -6,6 +6,7 @@
 #include "Player.h"
 #include "Overlay.h"
 
+#include <array>
 #include <atomic>
 #include <thread>
 
@@ -21,8 +22,13 @@ public:
     void EnableInfiniteArmor(bool enable);
     void EnableESP(bool enable);
 private:
+    int  GetGameMode() const;
     void CheatLoop();
     void DrawESP();
+    void DrawEnemyBox(int team_side, int x, int y, int boxW, int boxH);
+    void DrawEnemyName(const std::array<char, 16>& name, int x, int y, int boxW);
+    void DrawEnemyHealth(int health, int x, int y, int boxW, int boxH);
+
 
     Entity  &m_entity;
     Player  &m_player;

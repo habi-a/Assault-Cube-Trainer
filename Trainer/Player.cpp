@@ -1,6 +1,16 @@
 #include "Offsets.h"
 #include "Player.h"
 
+int Player::GetTeamSide(Memory& mem) const
+{
+    int team_side = -1;
+    uintptr_t addr = mem.ResolveAddress(Offsets::PlayerBase, Offsets::Team);
+
+    if (!addr)
+        return team_side;
+    mem.Read(addr, &team_side, sizeof(team_side));
+    return team_side;
+}
 
 int Player::GetAmmo(Memory &mem) const
 {

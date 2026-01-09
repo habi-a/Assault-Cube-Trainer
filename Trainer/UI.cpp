@@ -62,7 +62,7 @@ HWND CreateTrainerUI(HINSTANCE hInstance, CheatManager* cheats)
         return nullptr;
 
     hwnd = CreateWindowEx(0, CLASS_NAME, L"AssaultCube Trainer", WS_OVERLAPPED | WS_CAPTION | WS_SYSMENU, CW_USEDEFAULT, CW_USEDEFAULT, 
-        300, 300, nullptr, nullptr, hInstance, nullptr);
+        250, 250, nullptr, nullptr, hInstance, nullptr);
     if (!hwnd)
         return nullptr;
 

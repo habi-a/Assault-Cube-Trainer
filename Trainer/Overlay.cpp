@@ -8,6 +8,11 @@ Overlay::~Overlay()
         DestroyWindow(m_overlayHwnd);
         m_overlayHwnd = nullptr;
     }
+    if (m_fontSmall)
+    {
+        DeleteObject(m_fontSmall);
+        m_fontSmall = nullptr;
+    }
 }
 
 bool Overlay::IsCreated()
@@ -34,22 +39,14 @@ bool Overlay::Create(HWND gameWindow)
         return false;
 
     GetWindowRect(m_gameHwnd, &r);
-    m_overlayHwnd = CreateWindowEx(
-        WS_EX_TOPMOST | WS_EX_LAYERED | WS_EX_TRANSPARENT,
-        L"STATIC",
-        nullptr,
-        WS_POPUP,
-        r.left, r.top,
-        r.right - r.left,
-        r.bottom - r.top,
-        nullptr,
-        nullptr,
-        nullptr,
-        nullptr
-    );
-
+    m_overlayHwnd = CreateWindowEx(WS_EX_TOPMOST | WS_EX_LAYERED | WS_EX_TRANSPARENT, L"STATIC", nullptr, WS_POPUP, r.left, r.top, r.right - r.left, r.bottom - r.top, nullptr, nullptr, nullptr, nullptr);
     if (!m_overlayHwnd)
         return false;
+
+    m_fontSmall = CreateFontA(12, 0, 0, 0, FW_NORMAL, FALSE, FALSE, FALSE, ANSI_CHARSET, OUT_DEFAULT_PRECIS, CLIP_DEFAULT_PRECIS, DEFAULT_QUALITY, DEFAULT_PITCH, "Tahoma");
+    if (!m_overlayHwnd)
+        return false;
+
     SetLayeredWindowAttributes(m_overlayHwnd, RGB(0, 0, 0), 255, LWA_COLORKEY | LWA_ALPHA);
     ShowWindow(m_overlayHwnd, SW_SHOW);
     m_is_created = true;
@@ -59,7 +56,7 @@ bool Overlay::Create(HWND gameWindow)
 }
 
 
-void Overlay::Update()
+void Overlay::Update() const
 {
     RECT r;
 
@@ -103,7 +100,7 @@ void Overlay::RenderClear()
     FillRect(m_hdc, &r, (HBRUSH)GetStockObject(BLACK_BRUSH));
 }
 
-void Overlay::DrawRect(int x, int y, int w, int h, COLORREF color)
+void Overlay::DrawRect(int x, int y, int w, int h, COLORREF color) const
 {
     if (!m_hdc)
         return;
@@ -117,4 +114,27 @@ void Overlay::DrawRect(int x, int y, int w, int h, COLORREF color)
     SelectObject(m_hdc, oldPen);
     SelectObject(m_hdc, oldBrush);
     DeleteObject(pen);
+}
+
+void Overlay::DrawString(int x, int y, const char* text, COLORREF color) const
+{
+    if (!m_hdc || !text)
+        return;
+
+    HFONT oldFont = (HFONT)SelectObject(m_hdc, m_fontSmall);
+    SetTextColor(m_hdc, color);
+    SetBkMode(m_hdc, TRANSPARENT);
+    TextOutA(m_hdc, x, y, text, (int)strlen(text));
+    SelectObject(m_hdc, (HGDIOBJ)oldFont);
+}
+
+void Overlay::DrawFilledRect(int x, int y, int w, int h, COLORREF color) const
+{
+    if (!m_hdc)
+        return;
+
+    HBRUSH brush = CreateSolidBrush(color);
+    RECT r{ x, y, x + w, y + h };
+    FillRect(m_hdc, &r, brush);
+    DeleteObject(brush);
 }

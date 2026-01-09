@@ -10,7 +10,15 @@ SIZE_T Entity::GetPlayerCount(Memory &mem) const
     return player_numbers;
 }
 
-int Entity::GetArmor(Memory& mem, DWORD entity_address) const
+int Entity::GetTeamSide(Memory &mem, DWORD entity_address) const
+{
+    int team_side = -1;
+
+    mem.Read(entity_address + Offsets::Team, &team_side, sizeof(team_side));
+    return team_side;
+}
+
+int Entity::GetArmor(Memory &mem, DWORD entity_address) const
 {
     int armor = -1;
 
@@ -18,12 +26,20 @@ int Entity::GetArmor(Memory& mem, DWORD entity_address) const
     return armor;
 }
 
-int Entity::GetHealth(Memory& mem, DWORD entity_address) const
+int Entity::GetHealth(Memory &mem, DWORD entity_address) const
 {
     int health = -1;
 
     mem.Read(entity_address + Offsets::Health, &health, sizeof(health));
     return health;
+}
+
+std::array<char, 16> Entity::GetName(Memory &mem, DWORD entity_address) const
+{
+    std::array<char, 16> name{};
+
+    mem.Read(entity_address + Offsets::Name, &name, sizeof(name));
+    return name;
 }
 
 Vec3 Entity::GetPosition(Memory &mem, DWORD entity_address) const
@@ -46,21 +62,23 @@ Vec3 Entity::GetHeadPosition(Memory &mem, DWORD entity_address) const
     return pos;
 }
 
-EntityInfo Entity::GetEntity(Memory& mem, DWORD entityListAddress, SIZE_T playerNumber) const
+EntityInfo Entity::GetEntity(Memory &mem, DWORD entityListAddress, SIZE_T playerNumber) const
 {
     EntityInfo entity{};
     DWORD entity_address = 0;
 
     mem.Read(entityListAddress + playerNumber * sizeof(entity_address), &entity_address, sizeof(entity_address));
 
-    entity.health = GetHealth(mem, entity_address);
-    entity.armor = GetArmor(mem, entity_address);
-    entity.coords = GetPosition(mem, entity_address);
+    entity.team       = GetTeamSide(mem, entity_address);
+    entity.health     = GetHealth(mem, entity_address);
+    entity.armor      = GetArmor(mem, entity_address);
+    entity.name       = GetName(mem, entity_address);
+    entity.coords     = GetPosition(mem, entity_address);
     entity.headCoords = GetHeadPosition(mem, entity_address);
     return entity;
 }
 
-std::vector<EntityInfo> Entity::GetAllEntities(Memory& mem) const
+std::vector<EntityInfo> Entity::GetAllEntities(Memory &mem) const
 {
     std::vector<EntityInfo> entities;
     DWORD entity_list_address = 0;

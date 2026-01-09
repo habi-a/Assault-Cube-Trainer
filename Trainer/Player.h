@@ -5,6 +5,7 @@
 class Player
 {
 public:
+    int  GetTeamSide(Memory& mem) const;
     int  GetAmmo(Memory &mem) const;
     void SetAmmo(Memory &mem, int value) const;
     int  GetHealth(Memory &mem) const;
