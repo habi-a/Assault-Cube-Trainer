@@ -20,43 +20,15 @@ CheatManager::~CheatManager()
         m_cheat_thread.join();
 }
 
-int CheatManager::GetGameMode() const
+void CheatManager::DrawEnemyBox(int teamSide, int localTeam, int x, int y, int boxW, int boxH) noexcept
 {
-    int game_mode = 0;
-
-    m_mem.Read(m_mem.GetBase() + Offsets::GameMode, &game_mode, sizeof(int));
-    return game_mode;
+    if (localTeam != teamSide)
+        m_overlay.DrawRect(x, y, static_cast<int>(boxW), static_cast<int>(boxH), RGB(255, 0, 0));
+    else if (teamSide != -1)
+        m_overlay.DrawRect(x, y, static_cast<int>(boxW), static_cast<int>(boxH), RGB(0, 128, 255));
 }
 
-void CheatManager::EnableInfiniteAmmo(bool enable)
-{
-    m_infiniteAmmo = enable;
-}
-
-void CheatManager::EnableInfiniteHealth(bool enable)
-{
-    m_infiniteHealth = enable;
-}
-
-void CheatManager::EnableInfiniteArmor(bool enable)
-{
-    m_infiniteArmor = enable;
-}
-
-void CheatManager::EnableESP(bool enable)
-{
-    m_esp_is_enabled = enable;
-}
-
-void CheatManager::DrawEnemyBox(int team_side, int x, int y, int boxW, int boxH)
-{
-    if (m_player.GetTeamSide(m_mem) != team_side)
-        m_overlay.DrawRect(x, y, (int)boxW, (int)boxH, RGB(255, 0, 0));
-    else if (team_side != -1)
-        m_overlay.DrawRect(x, y, (int)boxW, (int)boxH, RGB(0, 128, 255));
-}
-
-void CheatManager::DrawEnemyName(const std::array<char, 16> &name, int x, int y, int boxW)
+void CheatManager::DrawEnemyName(const std::array<char, 16> &name, int x, int y, int boxW) noexcept
 {
     int textX = x + boxW / 2 - 12;
     int textY = y - 14;
@@ -64,64 +36,66 @@ void CheatManager::DrawEnemyName(const std::array<char, 16> &name, int x, int y,
     m_overlay.DrawString(textX, textY, name.data(), RGB(255, 255, 255));
 }
 
-void CheatManager::DrawEnemyHealth(int health, int x, int y, int boxW, int boxH)
+void CheatManager::DrawEnemyHealth(int health, int x, int y, int boxW, int boxH) noexcept
 {
     float pct  = std::clamp(health / 100.0f, 0.0f, 1.0f);
     int barX   = x - 6;
     int barY   = y;
     int barW   = 4;
     int barH   = boxH;
-    int greenH = (int)(barH * pct);
+    int greenH = static_cast<int>(barH * pct);
     int redH   = barH - greenH;
 
     m_overlay.DrawFilledRect(barX, barY, barW, redH, RGB(255, 0, 0));
     m_overlay.DrawFilledRect(barX, barY + redH, barW, greenH, RGB(0, 255, 0));
 }
 
-void CheatManager::DrawESP()
+void CheatManager::DrawESP() noexcept
 {
-    std::array<float, 16> view_matrix = m_camera.GetViewMatrix(m_mem);
-    std::vector<EntityInfo> enemies_info = m_entity.GetAllEntities(m_mem);
+    auto view = m_camera.GetViewMatrix(m_mem);
+    auto enemies = m_entity.GetAllEntities(m_mem);
 
-    for (EntityInfo& enemy : enemies_info)
+    const int localTeam = m_player.GetTeamSide(m_mem);
+
+    for (const auto& e : enemies)
     {
+        if (e.health <= 0) continue;
+
         Vec2 screen{}, head{};
-        if (m_camera.WorldToScreen(enemy.coords, screen, view_matrix, m_overlay.GetWidth(), m_overlay.GetHeight())
-            && m_camera.WorldToScreen(enemy.headCoords, head, view_matrix, m_overlay.GetWidth(), m_overlay.GetHeight())
-            && enemy.health > 0)
-        {
-            float boxH = screen.y - head.y;
-            float boxW = boxH * 0.5f;
+        if (!m_camera.WorldToScreen(e.coords, screen, view, m_overlay.GetWidth(), m_overlay.GetHeight())) continue;
+        if (!m_camera.WorldToScreen(e.headCoords, head, view, m_overlay.GetWidth(), m_overlay.GetHeight())) continue;
 
-            int x = (int)(head.x - boxW * 0.5f);
-            int y = (int)head.y;
+        float h = screen.y - head.y;
+        float w = h * 0.5f;
 
-            DrawEnemyBox(enemy.team, x, y, (int)boxW, (int)boxH);
-            DrawEnemyName(enemy.name, x, y, (int)boxW);
-            DrawEnemyHealth(enemy.health, x, y, (int)boxW, (int)boxH);
-        }
+        int x = static_cast<int>(head.x - w * 0.5f);
+        int y = static_cast<int>(head.y);
+
+        DrawEnemyBox(e.team, localTeam, x, y, static_cast<int>(w), static_cast<int>(h));
+        DrawEnemyName(e.name, x, y, static_cast<int>(w));
+        DrawEnemyHealth(e.health, x, y, static_cast<int>(w), static_cast<int>(h));
     }
 }
 
-void CheatManager::CheatLoop()
+void CheatManager::CheatLoop() noexcept
 {
-
     while (m_running)
     {
-        if (m_infiniteAmmo)
-            m_player.SetAmmo(m_mem, m_ammoFreezeValue);
-        if (m_infiniteHealth)
-            m_player.SetHealth(m_mem, m_healthFreezeValue);
-        if (m_infiniteArmor)
-            m_player.SetArmor(m_mem, m_armorFreezeValue);
-        if (m_overlay.IsCreated()) {
+        if (m_infiniteAmmo)   m_player.SetAmmo(m_mem, AmmoFreeze);
+        if (m_infiniteHealth) m_player.SetHealth(m_mem, HPFreeze);
+        if (m_infiniteArmor)  m_player.SetArmor(m_mem, ArmorFreeze);
+
+        if (m_overlay.IsCreated())
+        {
             m_overlay.Update();
             m_overlay.RenderStart();
             m_overlay.RenderClear();
+
             if (m_esp_is_enabled)
                 DrawESP();
+
             m_overlay.RenderEnd();
         }
-        std::this_thread::sleep_for(std::chrono::milliseconds(16));
+        std::this_thread::sleep_for(std::chrono::milliseconds(8));
     }
 }

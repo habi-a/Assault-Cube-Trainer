@@ -11,30 +11,28 @@
 #include <thread>
 
 
-class CheatManager
-{
+class CheatManager {
 public:
-    CheatManager(Entity &entity, Player &player, Memory &mem, Overlay &overlay, Camera &camera);
+    CheatManager(Entity&, Player&, Memory&, Overlay&, Camera&);
     ~CheatManager();
 
-    void EnableInfiniteAmmo(bool enable);
-    void EnableInfiniteHealth(bool enable);
-    void EnableInfiniteArmor(bool enable);
-    void EnableESP(bool enable);
+    void EnableInfiniteAmmo(bool enable)    noexcept { m_infiniteAmmo = enable; }
+    void EnableInfiniteHealth(bool enable)  noexcept { m_infiniteHealth = enable; }
+    void EnableInfiniteArmor(bool enable)   noexcept { m_infiniteArmor = enable; }
+    void EnableESP(bool enable)             noexcept { m_esp_is_enabled = enable; }
+
 private:
-    int  GetGameMode() const;
-    void CheatLoop();
-    void DrawESP();
-    void DrawEnemyBox(int team_side, int x, int y, int boxW, int boxH);
-    void DrawEnemyName(const std::array<char, 16>& name, int x, int y, int boxW);
-    void DrawEnemyHealth(int health, int x, int y, int boxW, int boxH);
+    void CheatLoop() noexcept;
+    void DrawESP() noexcept;
+    void DrawEnemyBox(int teamSide, int localTeam, int x, int y, int w, int h) noexcept;
+    void DrawEnemyName(const std::array<char, 16>& name, int x, int y, int w) noexcept;
+    void DrawEnemyHealth(int hp, int x, int y, int w, int h) noexcept;
 
-
-    Entity  &m_entity;
-    Player  &m_player;
-    Memory  &m_mem;
-    Overlay &m_overlay;
-    Camera  &m_camera;
+    Entity& m_entity;
+    Player& m_player;
+    Memory& m_mem;
+    Overlay& m_overlay;
+    Camera& m_camera;
 
     std::thread       m_cheat_thread;
     std::atomic<bool> m_running{ true };
@@ -43,7 +41,7 @@ private:
     std::atomic<bool> m_infiniteArmor{ false };
     std::atomic<bool> m_esp_is_enabled{ false };
 
-    const int m_ammoFreezeValue = 20;
-    const int m_healthFreezeValue = 100;
-    const int m_armorFreezeValue = 100;
+    static constexpr int AmmoFreeze  = 20;
+    static constexpr int HPFreeze    = 100;
+    static constexpr int ArmorFreeze = 100;
 };

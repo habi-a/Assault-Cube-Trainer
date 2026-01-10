@@ -6,10 +6,9 @@
 #include <array>
 
 
-class Camera {
+class Camera
+{
 public:
-    std::array<float, 16> GetViewMatrix(Memory &mem);
-    bool WorldToScreen(const Vec3& pos, Vec2& out, const std::array<float, 16>& matrix, int width, int height);
-
-private:
+    [[nodiscard]] std::array<float, 16> GetViewMatrix(Memory& mem) const noexcept;
+    [[nodiscard]] bool WorldToScreen(const Vec3& pos, Vec2& out, const std::array<float, 16>& matrix, int width, int height) const noexcept;
 };

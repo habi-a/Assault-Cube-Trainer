@@ -1,73 +1,60 @@
-#include "Offsets.h"
 #include "Player.h"
+#include "Offsets.h"
 
-int Player::GetTeamSide(Memory& mem) const
+
+template<typename T>
+T Player::ReadField(Memory& mem, uintptr_t offset, T failValue) const noexcept
 {
-    int team_side = -1;
-    uintptr_t addr = mem.ResolveAddress(Offsets::PlayerBase, Offsets::Team);
-
+    uintptr_t addr = mem.ResolveAddress(Offsets::PlayerBase, offset);
     if (!addr)
-        return team_side;
-    mem.Read(addr, &team_side, sizeof(team_side));
-    return team_side;
+        return failValue;
+
+    T value{};
+    mem.Read(addr, &value, sizeof(T));
+    return value;
 }
 
-int Player::GetAmmo(Memory &mem) const
+template<typename T>
+void Player::WriteField(Memory& mem, uintptr_t offset, T value) const noexcept
 {
-    int ammo = -1;
-    uintptr_t addr = mem.ResolveAddress(Offsets::PlayerBase, Offsets::Ammo);
-
-    if (!addr)
-        return ammo;
-    mem.Read(addr, &ammo, sizeof(ammo));
-    return ammo;
-}
-
-void Player::SetAmmo(Memory &mem, int value) const
-{
-    uintptr_t addr = mem.ResolveAddress(Offsets::PlayerBase, Offsets::Ammo);
-
+    uintptr_t addr = mem.ResolveAddress(Offsets::PlayerBase, offset);
     if (!addr)
         return;
-    mem.Write(addr, &value, sizeof(value));
+
+    mem.Write(addr, &value, sizeof(T));
 }
 
-int Player::GetHealth(Memory &mem) const
+int Player::GetTeamSide(Memory& mem) const noexcept
 {
-    int health = -1;
-    uintptr_t addr = mem.ResolveAddress(Offsets::PlayerBase, Offsets::Health);
-
-    if (!addr)
-        return health;
-    mem.Read(addr, &health, sizeof(health));
-    return health;
+    return ReadField<int>(mem, Offsets::Team, -1);
 }
 
-void Player::SetHealth(Memory &mem, int value) const
+int Player::GetAmmo(Memory& mem) const noexcept
 {
-    uintptr_t addr = mem.ResolveAddress(Offsets::PlayerBase, Offsets::Health);
-
-    if (!addr)
-        return;
-    mem.Write(addr, &value, sizeof(value));
+    return ReadField<int>(mem, Offsets::Ammo, -1);
 }
 
-int Player::GetArmor(Memory &mem) const
+void Player::SetAmmo(Memory& mem, int value) const noexcept
 {
-    int armor = -1;
-    uintptr_t addr = mem.ResolveAddress(Offsets::PlayerBase, Offsets::Armor);
-
-    if (!addr)
-        return armor;
-    mem.Read(addr, &armor, sizeof(armor));
-    return armor;
+    WriteField<int>(mem, Offsets::Ammo, value);
 }
 
-void Player::SetArmor(Memory &mem, int value) const
+int Player::GetHealth(Memory& mem) const noexcept
 {
-    uintptr_t addr = mem.ResolveAddress(Offsets::PlayerBase, Offsets::Armor);
+    return ReadField<int>(mem, Offsets::Health, -1);
+}
 
-    if (!addr)
-        return;
-    mem.Write(addr, &value, sizeof(value));
+void Player::SetHealth(Memory& mem, int value) const noexcept
+{
+    WriteField<int>(mem, Offsets::Health, value);
+}
+
+int Player::GetArmor(Memory& mem) const noexcept
+{
+    return ReadField<int>(mem, Offsets::Armor, -1);
+}
+
+void Player::SetArmor(Memory& mem, int value) const noexcept
+{
+    WriteField<int>(mem, Offsets::Armor, value);
 }

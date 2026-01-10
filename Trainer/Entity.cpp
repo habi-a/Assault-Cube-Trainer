@@ -2,90 +2,85 @@
 #include "Offsets.h"
 
 
-SIZE_T Entity::GetPlayerCount(Memory &mem) const
+SIZE_T Entity::GetPlayerCount(Memory& mem) const noexcept
 {
-    SIZE_T player_numbers = 0;
-
-    mem.Read(mem.GetBase() + Offsets::PlayerCount , &player_numbers, sizeof(int));
-    return player_numbers;
+    SIZE_T count{};
+    mem.Read(mem.GetBase() + Offsets::PlayerCount, &count, sizeof(int));
+    return count;
 }
 
-int Entity::GetTeamSide(Memory &mem, DWORD entity_address) const
+int Entity::GetTeamSide(Memory& mem, DWORD address) const noexcept
 {
-    int team_side = -1;
-
-    mem.Read(entity_address + Offsets::Team, &team_side, sizeof(team_side));
-    return team_side;
+    int team{ -1 };
+    mem.Read(address + Offsets::Team, &team, sizeof(team));
+    return team;
 }
 
-int Entity::GetArmor(Memory &mem, DWORD entity_address) const
+int Entity::GetArmor(Memory& mem, DWORD address) const noexcept
 {
-    int armor = -1;
-
-    mem.Read(entity_address + Offsets::Armor, &armor, sizeof(armor));
+    int armor{ -1 };
+    mem.Read(address + Offsets::Armor, &armor, sizeof(armor));
     return armor;
 }
 
-int Entity::GetHealth(Memory &mem, DWORD entity_address) const
+int Entity::GetHealth(Memory& mem, DWORD address) const noexcept
 {
-    int health = -1;
-
-    mem.Read(entity_address + Offsets::Health, &health, sizeof(health));
-    return health;
+    int hp{ -1 };
+    mem.Read(address + Offsets::Health, &hp, sizeof(hp));
+    return hp;
 }
 
-std::array<char, 16> Entity::GetName(Memory &mem, DWORD entity_address) const
+std::array<char, 16> Entity::GetName(Memory& mem, DWORD address) const noexcept
 {
-    std::array<char, 16> name{};
-
-    mem.Read(entity_address + Offsets::Name, &name, sizeof(name));
-    return name;
+    std::array<char, 16> buffer{};
+    mem.Read(address + Offsets::Name, buffer.data(), buffer.size());
+    return buffer;
 }
 
-Vec3 Entity::GetPosition(Memory &mem, DWORD entity_address) const
+Vec3 Entity::GetPosition(Memory& mem, DWORD address) const noexcept
 {
     Vec3 pos{};
-
-    mem.Read(entity_address + Offsets::PosX, &pos.x, sizeof(float));
-    mem.Read(entity_address + Offsets::PosY, &pos.y, sizeof(float));
-    mem.Read(entity_address + Offsets::PosZ, &pos.z, sizeof(float));
+    mem.Read(address + Offsets::PosX, &pos.x, sizeof(float));
+    mem.Read(address + Offsets::PosY, &pos.y, sizeof(float));
+    mem.Read(address + Offsets::PosZ, &pos.z, sizeof(float));
     return pos;
 }
 
-Vec3 Entity::GetHeadPosition(Memory &mem, DWORD entity_address) const
+Vec3 Entity::GetHeadPosition(Memory& mem, DWORD address) const noexcept
 {
     Vec3 pos{};
-
-    mem.Read(entity_address + Offsets::HeadPosX, &pos.x, sizeof(float));
-    mem.Read(entity_address + Offsets::HeadPosY, &pos.y, sizeof(float));
-    mem.Read(entity_address + Offsets::HeadPosZ, &pos.z, sizeof(float));
+    mem.Read(address + Offsets::HeadPosX, &pos.x, sizeof(float));
+    mem.Read(address + Offsets::HeadPosY, &pos.y, sizeof(float));
+    mem.Read(address + Offsets::HeadPosZ, &pos.z, sizeof(float));
     return pos;
 }
 
-EntityInfo Entity::GetEntity(Memory &mem, DWORD entityListAddress, SIZE_T playerNumber) const
+EntityInfo Entity::GetEntity(Memory& mem, DWORD listAddr, SIZE_T index) const noexcept
 {
-    EntityInfo entity{};
-    DWORD entity_address = 0;
+    DWORD address{};
+    mem.Read(listAddr + static_cast<DWORD>(index * sizeof(DWORD)), &address, sizeof(address));
 
-    mem.Read(entityListAddress + playerNumber * sizeof(entity_address), &entity_address, sizeof(entity_address));
-
-    entity.team       = GetTeamSide(mem, entity_address);
-    entity.health     = GetHealth(mem, entity_address);
-    entity.armor      = GetArmor(mem, entity_address);
-    entity.name       = GetName(mem, entity_address);
-    entity.coords     = GetPosition(mem, entity_address);
-    entity.headCoords = GetHeadPosition(mem, entity_address);
-    return entity;
+    EntityInfo out{};
+    out.team = GetTeamSide(mem, address);
+    out.health = GetHealth(mem, address);
+    out.armor = GetArmor(mem, address);
+    out.name = GetName(mem, address);
+    out.coords = GetPosition(mem, address);
+    out.headCoords = GetHeadPosition(mem, address);
+    return out;
 }
 
-std::vector<EntityInfo> Entity::GetAllEntities(Memory &mem) const
+std::vector<EntityInfo> Entity::GetAllEntities(Memory& mem) const
 {
-    std::vector<EntityInfo> entities;
-    DWORD entity_list_address = 0;
-    SIZE_T player_numbers = GetPlayerCount(mem);
+    DWORD listAddr{};
+    const SIZE_T count = GetPlayerCount(mem);
+    mem.Read(mem.GetBase() + Offsets::EntityList, &listAddr, sizeof(listAddr));
 
-    mem.Read(mem.GetBase() + Offsets::EntityList, &entity_list_address, sizeof(entity_list_address));
-    for (SIZE_T i = 1; i < player_numbers; ++i)
-        entities.push_back(GetEntity(mem, entity_list_address, i));
-    return entities;
+    std::vector<EntityInfo> vec;
+    vec.reserve(count);
+
+    for (SIZE_T i = 1; i < count; ++i)
+        vec.emplace_back(GetEntity(mem, listAddr, i));
+
+    return vec;
 }

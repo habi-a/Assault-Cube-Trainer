@@ -2,28 +2,29 @@
 #include "Offsets.h"
 
 
-std::array<float, 16> Camera::GetViewMatrix(Memory& mem)
-{
-    std::array<float, 16> view_matrix{};
+static constexpr float W_EPSILON = 0.1f;
 
-    mem.Read(mem.GetBase() + Offsets::ViewMatrix, &view_matrix, sizeof(view_matrix));
-    return view_matrix;
+std::array<float, 16> Camera::GetViewMatrix(Memory& mem) const noexcept
+{
+    std::array<float, 16> matrix{};
+    mem.Read(mem.GetBase() + Offsets::ViewMatrix, matrix.data(), sizeof(matrix));
+    return matrix;
 }
 
-bool Camera::WorldToScreen(const Vec3& pos, Vec2& out, const std::array<float, 16>& matrix, int width, int height)
+bool Camera::WorldToScreen(const Vec3& pos, Vec2& out, const std::array<float, 16>& m, int width, int height) const noexcept
 {
-    float clipX = pos.x * matrix[0] + pos.y * matrix[4] + pos.z * matrix[8] + matrix[12];
-    float clipY = pos.x * matrix[1] + pos.y * matrix[5] + pos.z * matrix[9] + matrix[13];
-    float clipZ = pos.x * matrix[2] + pos.y * matrix[6] + pos.z * matrix[10] + matrix[14];
-    float clipW = pos.x * matrix[3] + pos.y * matrix[7] + pos.z * matrix[11] + matrix[15];
+    float clipX = pos.x * m[0] + pos.y * m[4] + pos.z * m[8] + m[12];
+    float clipY = pos.x * m[1] + pos.y * m[5] + pos.z * m[9] + m[13];
+    float clipW = pos.x * m[3] + pos.y * m[7] + pos.z * m[11] + m[15];
 
-    if (clipW < 0.1f)
+    if (clipW < W_EPSILON)
         return false;
 
-    float ndcX = clipX / clipW;
-    float ndcY = clipY / clipW;
+    float invW = 1.0f / clipW;
+    float ndcX = clipX * invW;
+    float ndcY = clipY * invW;
 
-    out.x = (width / 2.f * ndcX) + (ndcX + width / 2.f);
-    out.y = -(height / 2.f * ndcY) + (ndcY + height / 2.f);
+    out.x = (ndcX * 0.5f + 0.5f) * width;
+    out.y = (1.0f - (ndcY * 0.5f + 0.5f)) * height;
     return true;
 }
