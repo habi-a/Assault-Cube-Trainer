@@ -11,6 +11,7 @@ It was built for **learning purposes**, mainly to explore:
 
 The goal is **not to use this online or maliciously**, but to understand **how an external cheat works internally**.
 
+![Screenshot](screenshot.png)
 
 ---
 
@@ -79,5 +80,6 @@ Learning reverse engineering & low-level concepts is the main goal.
 ---
 
 ## 📝 License
+
 
 MIT
