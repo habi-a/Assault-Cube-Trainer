@@ -41,24 +41,6 @@ The goal is **not to use this online or maliciously**, but to understand **how a
 
 ---
 
-## 🧰 Technologies & Concepts
-
-- **Language:** C++17
-- **API:** Win32
-- **Tools:**
-  - Visual Studio 2022
-  - DebugView (overlay logging)
-
-- **Concepts explored:**
-  - External process memory manipulation
-  - Transparent Win32 overlay
-  - Multi-threading
-  - Matrix transformations (World-To-Screen)
-  - Modern C++ structs & classes
-
-
----
-
 ## 🖥 Requirements & Dependencies
 
 - Windows 10/11
@@ -82,4 +64,5 @@ Learning reverse engineering & low-level concepts is the main goal.
 
 
 MIT
+
 
