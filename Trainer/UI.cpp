@@ -54,7 +54,7 @@ HWND CreateTrainerUI(HINSTANCE hInstance, CheatManager* cheats)
 
     auto MakeCheckBox = [&](const wchar_t* txt, int id, int y)
     {
-        return CreateWindowW(L"BUTTON", txt, WS_VISIBLE | WS_CHILD | BS_AUTOCHECKBOX, 20, y, 200, 22, hwnd, reinterpret_cast<HMENU>(id), hInstance, nullptr);
+        return CreateWindowW(L"BUTTON", txt, WS_VISIBLE | WS_CHILD | BS_AUTOCHECKBOX, 20, y, 200, 22, hwnd, reinterpret_cast<HMENU>(static_cast<uintptr_t>(id)), hInstance, nullptr);
     };
 
     MakeCheckBox(L"Infinite Ammo", UI::ID_AMMO, 30);
