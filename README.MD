@@ -7,7 +7,6 @@ It was built for **learning purposes**, mainly to explore:
 - Light reverse engineering
 - External overlay rendering
 - 2D ESP (World-To-Screen projection)
-- Modern C++ code structure and architecture
 
 The goal is **not to use this online or maliciously**, but to understand **how an external cheat works internally**.
 
@@ -25,7 +24,7 @@ The goal is **not to use this online or maliciously**, but to understand **how a
 - World-To-Screen based on the view matrix
 
 ✔ **Player Hacks**
-- Infinite Ammo
+- Infinite Ammo (Assault Riffle only)
 - Infinite Health
 - Infinite Armor
 
@@ -38,24 +37,6 @@ The goal is **not to use this online or maliciously**, but to understand **how a
 - Static offsets (v1.3)
 - Entity list + head/feet coordinates
 - External ViewMatrix access
-
-
----
-
-## 🧰 Technologies & Concepts
-
-- **Language:** C++17
-- **API:** Win32
-- **Tools:**
-  - Visual Studio 2022
-  - DebugView (overlay logging)
-
-- **Concepts explored:**
-  - External process memory manipulation
-  - Transparent Win32 overlay
-  - Multi-threading
-  - Matrix transformations (World-To-Screen)
-  - Modern C++ structs & classes
 
 
 ---
@@ -83,3 +64,5 @@ Learning reverse engineering & low-level concepts is the main goal.
 
 
 MIT
+
+
