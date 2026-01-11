@@ -5,7 +5,6 @@
 
 namespace Offsets
 {
-    inline constexpr uintptr_t GameMode = 0x18AC00;
     inline constexpr uintptr_t ViewMatrix = 0x17DFD0;
     inline constexpr uintptr_t EntityList = 0x18AC04;
     inline constexpr uintptr_t PlayerCount = 0x18AC0C;
