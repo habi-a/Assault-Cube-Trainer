@@ -7,7 +7,6 @@ It was built for **learning purposes**, mainly to explore:
 - Light reverse engineering
 - External overlay rendering
 - 2D ESP (World-To-Screen projection)
-- Modern C++ code structure and architecture
 
 The goal is **not to use this online or maliciously**, but to understand **how an external cheat works internally**.
 
@@ -25,7 +24,7 @@ The goal is **not to use this online or maliciously**, but to understand **how a
 - World-To-Screen based on the view matrix
 
 ✔ **Player Hacks**
-- Infinite Ammo
+- Infinite Ammo (Assault Riffle only)
 - Infinite Health
 - Infinite Armor
 
@@ -83,3 +82,4 @@ Learning reverse engineering & low-level concepts is the main goal.
 
 
 MIT
+
